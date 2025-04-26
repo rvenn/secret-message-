@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8">    <meta charset="UTF-8">    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Message Toolkit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            background: #34495e;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .tab.active {
+            background: #1abc9c;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 25px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #1abc9c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #16a085;
+        }
+        .output-container {
+            position: relative;
+            margin-top: -15px;
+        }
+        #encoderOutput, #decoderOutput {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 69px;
+            white-space: pre-wrap;
+            border: 1px dashed #ccc;
+            word-break: break-all;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 87px;
+            right: 0px;
+            background: #3498db;
+            padding: 5px 100px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+
+
+            .copy-btn:hover {
+            background: #2980b9;
+        }
+        .note {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-group button {
+            flex: 1;
+        }
+        
+        /* Help Section */
+        .help-toggle {
+            text-align: center;
+            margin: 15px 0;
+        }
+        #helpBtn {
+            background: #3498db;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        #helpSection {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #eee;
+            display: none;
+        }
+        #helpSection h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .note {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 60px) {
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Secret Message Toolkit</h1>
+            <p>Encode & Decode Pesan Rahasia</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('encoder')">🔡 Buat Pesan Rahasia</div>
+            <div class="tab" onclick="switchTab('decoder')">🔍 Baca Pesan Rahasia</div>
+        </div>
+        
+        <!-- Encoder Tab -->
+        <div id="encoder" class="tab-content active">
+            <div class="note">
+                Masukkan teks untuk mengubah huruf menjadi angka rahasia!
+            </div>
+            
+            <select id="encoderMonth">
+                <option value="1" select>Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+                <option value="0">Normal</option>
+            </select>
+            
+            <textarea id="encoderInput" placeholder="Masukkan teks yang akan diencode..."></textarea>
+            
+            <div class="btn-group">
+                <button onclick="encode()">ENCODE</button>
+                <button onclick="clearEncoder()" style="background:#e74c3c">CLEAR</button>
+            </div>
+            
+            <div class="note">Hasil Encode:</div>
+            <div class="output-container">
+                <div id="encoderOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard('encoderOutput')">COPY</button>
+            </div>
+        </div>
+        
+        <!-- Decoder Tab -->
+        <div id="decoder" class="tab-content">
+            <div class="note">
+                Masukkan angka rahasia dan untuk membaca teks asli!
+            </div>
+            
+            <select id="decoderMonth">
+                <option value="1" select>Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+                <option value="0">Normal</option>
+            </select>
+            
+            <textarea id="decoderInput" placeholder="Masukkan angka rahasia..."></textarea>
+            
+            <div class="btn-group">
+                <button onclick="decode()">DECODE</button>
+                <button onclick="clearDecoder()" style="background:#e74c3c">CLEAR</button>
+            </div>
+            
+            <div class="note">Hasil Decode:</div>
+            <div class="output-container">
+                <div id="decoderOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard('decoderOutput')">COPY</button>
+            </div>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="help-toggle">
+            <button id="helpBtn" onclick="toggleHelp()">📚 Tampilkan Petunjuk Penggunaan</button>
+        </div>
+        
+        <div id="helpSection">
+            <h3>🔍 Cara Menggunakan Aplikasi Ini</h3>
+            
+            <h4>🔡 Mode Encode (Buat Pesan Rahasia):</h4>
+            <ol>
+                <li><strong>Huruf</strong> A=1 B=2 C=3 ... Z=26. Nilai bulan akan menjadi kode rahasia (contoh: Abc = 567) (April= +4)</li>
+                <li><strong>Masukkan teks biasa</strong> - Ketik atau tempel teks yang ingin dirahasiakan</li>
+                <li><strong>Klik ENCODE</strong> - Teks akan berubah menjadi angka rahasia</li>
+                <li><strong>Salin hasil</strong> - Gunakan tombol COPY untuk menyalin angka</li>
+            </ol>
+            
+            <h4>🔍 Mode Decode (Baca Pesan Rahasia):</h4>
+            <ol>
+                <li><strong>Pilih bulan</strong> - Gunakan bulan yang sama saat pesan diencode</li>
+                <li><strong>Masukkan angka rahasia</strong> - Tempel angka yang diterima</li>
+                <li><strong>Klik DECODE</strong> - Angka akan dikembalikan ke teks asli</li>
+                <li><strong>Salin hasil</strong> - Gunakan tombol COPY jika perlu</li>
+            </ol>
+            
+            <h4>💡 Tips Penting:</h4>
+            <ul>
+                <li>Untuk baris baru, gunakan <strong>SHIFT+ENTER</strong> saat mengetik</li>
+                <li>Gunakan "." untuk spasi (contoh:ABC.EDF) → 1 2 3.4 5 6</li>
+                <li>Karakter non-alfabet (seperti !,?) akan diabaikan dalam proses</li>
+                <li>Contoh valid: <code>ABC</code> (April = 4) → <code>5 6 7</code></li>
+            </ul>
+            
+            <h4>⚠️ Troubleshooting:</h4>
+            <ul>
+                <li>Tombol COPY tidak bekerja? Pastikan tidak ada pemblokiran popup</li>
+                <li>Hasil tidak sesuai? Periksa bulan yang dipilih</li>
+                <li>Tampilan rusak? Coba rotasi layar HP ke mode landscape</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Encoder function
+        function encode() {
+            const text = document.getElementById('encoderInput').value.toUpperCase();
+            const month = parseInt(document.getElementById('encoderMonth').value);
+            let result = '';
+            
+            for(let i = 0; i < text.length; i++) {
+                const char = text[i];
+                
+                if(char >= 'A' && char <= 'Z') {
+                    const num = (char.charCodeAt(0) - 64 + month - 1) % 26 + 1;
+                    result += num + ' ';
+                } 
+                else if(char === '\n') {
+                    result += '\n';
+                }
+                else {
+                    result += char;
+                }
+            }
+            
+            document.getElementById('encoderOutput').textContent = result;
+        }
+
+        // Decoder function
+        function decode() {
+            const input = document.getElementById('decoderInput').value.trim();
+            const month = parseInt(document.getElementById('decoderMonth').value);
+            let result = '';
+            
+            const numbers = input.split(/\s+/).filter(num => num !== '');
+            
+            for (let numStr of numbers) {
+                const num = parseInt(numStr);
+                
+                if (!isNaN(num)) {
+                    let decodedNum = (num - month) % 26;
+                    if (decodedNum <= 0) decodedNum += 26;
+                    
+                    const char = String.fromCharCode(decodedNum + 64);
+                    result += char;
+                } else {
+                    result += numStr;
+                }
+            }
+            
+            document.getElementById('decoderOutput').textContent = result;
+        }
+
+        // Clipboard function
+        function copyToClipboard(elementId) {
+            const outputElement = document.getElementById(elementId);
+            const textToCopy = outputElement.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const copyBtn = outputElement.nextElementSibling;
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'COPIED!';
+                copyBtn.style.background = '#2ecc71';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '#3498db';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Gagal menyalin teks. Coba lagi!');
+            });
+        }
+
+        // Clear functions
+        function clearEncoder() {
+            document.getElementById('encoderInput').value = '';
+            document.getElementById('encoderOutput').textContent = '';
+        }
+
+        function clearDecoder() {
+            document.getElementById('decoderInput').value = '';
+            document.getElementById('decoderOutput').textContent = '';
+        }
+
+        // Help section toggle
+        function toggleHelp() {
+            const helpSection = document.getElementById('helpSection');
+            const helpBtn = document.getElementById('helpBtn');
+            
+            if (helpSection.style.display === 'block') {
+                helpSection.style.display = 'none';
+                helpBtn.textContent = '📚 Tampilkan Petunjuk Penggunaan';
+            } else {
+                helpSection.style.display = 'block';
+                helpBtn.textContent = '❌ Sembunyikan Petunjuk';
+            }
+        }
+    </script>
+</body>
+</html>
